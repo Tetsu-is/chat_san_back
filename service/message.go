@@ -10,6 +10,10 @@ type MessageService struct {
 	db *sql.DB
 }
 
+func NewMessageService(db *sql.DB) *MessageService {
+	return &MessageService{db: db}
+}
+
 func (s *MessageService) CreateMessage(ctx context.Context, text string) (*model.Message, error) {
 	const (
 		insert  = `INSERT INTO messages(text) VALUES(?)`

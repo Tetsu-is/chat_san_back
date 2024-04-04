@@ -11,4 +11,9 @@ type (
 		CreatedAt time.Time `json:"created_at"`
 		UpdatedAt time.Time `json:"updated_at"`
 	}
+
+	ReadMessageRequest struct {
+		Offset int64 `json:"offset"`
+		Limit  int64 `json:"limit"`
+	}
 )
