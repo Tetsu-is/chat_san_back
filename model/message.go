@@ -12,6 +12,14 @@ type (
 		UpdatedAt time.Time `json:"updated_at"`
 	}
 
+	CreateMessageRequest struct {
+		Text string `json:"text"`
+	}
+
+	CreateMessageResponse struct {
+		Message *Message `json:"message"`
+	}
+
 	ReadMessageRequest struct {
 		Offset int64 `json:"offset"`
 		Limit  int64 `json:"limit"`

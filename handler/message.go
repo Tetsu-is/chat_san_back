@@ -18,6 +18,10 @@ func NewMessageHandler(svc *service.MessageService) *MessageHandler {
 }
 
 func (h *MessageHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodPost {
+		req := &model.CreateMessageRequest{}
+	}
+
 	if r.Method == http.MethodGet {
 		req := &model.ReadMessageRequest{}
 
