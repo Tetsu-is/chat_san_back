@@ -14,17 +14,21 @@ func NewMessageService(db *sql.DB) *MessageService {
 	return &MessageService{db: db}
 }
 
-func (s *MessageService) CreateMessage(ctx context.Context, text string) (*model.Message, error) {
+func (s *MessageService) CreateMessage(ctx context.Context, body string) (*model.Message, error) {
 	const (
-		insert  = `INSERT INTO messages(text) VALUES(?)`
-		confirm = `SELECT id, text, created_at, updated_at FROM messages WHERE id = ?`
+		insert  = `INSERT INTO messages(body) VALUES(?)`
+		confirm = `SELECT id, body, created_at, updated_at FROM messages WHERE id = ?`
 	)
 
 	if _, err := s.db.PrepareContext(ctx, insert); err != nil {
 		return nil, err
 	}
 
-	res, err := s.db.ExecContext(ctx, insert, text)
+	if _, err := s.db.PrepareContext(ctx, confirm); err != nil {
+		return nil, err
+	}
+
+	res, err := s.db.ExecContext(ctx, insert, body)
 	if err != nil {
 		return nil, err
 	}
@@ -37,7 +41,7 @@ func (s *MessageService) CreateMessage(ctx context.Context, text string) (*model
 	row := s.db.QueryRowContext(ctx, confirm, id)
 
 	var msg model.Message
-	if err := row.Scan(&msg.ID, &msg.Text, &msg.CreatedAt, &msg.UpdatedAt); err != nil {
+	if err := row.Scan(&msg.ID, &msg.Body, &msg.CreatedAt, &msg.UpdatedAt); err != nil {
 		return nil, err
 	}
 
@@ -46,7 +50,7 @@ func (s *MessageService) CreateMessage(ctx context.Context, text string) (*model
 
 func (s *MessageService) ReadMessage(ctx context.Context, offset, limit int64) ([]*model.Message, error) {
 	const (
-		read = `SELECT id, text, created_at, updated_at FROM messages WHERE id > ? ORDER BY id LIMIT ?`
+		read = `SELECT id, body, created_at, updated_at FROM messages WHERE id > ? ORDER BY id LIMIT ?`
 	)
 
 	s.db.PrepareContext(ctx, read)
@@ -60,7 +64,7 @@ func (s *MessageService) ReadMessage(ctx context.Context, offset, limit int64) (
 
 	for rows.Next() {
 		var msg model.Message
-		rows.Scan(&msg.ID, &msg.Text, &msg.CreatedAt, &msg.UpdatedAt)
+		rows.Scan(&msg.ID, &msg.Body, &msg.CreatedAt, &msg.UpdatedAt)
 		messages = append(messages, &msg)
 	}
 

@@ -20,6 +20,23 @@ func NewMessageHandler(svc *service.MessageService) *MessageHandler {
 func (h *MessageHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
 		req := &model.CreateMessageRequest{}
+		if err := json.NewDecoder(r.Body).Decode(req); err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		if req.Body == "" {
+			http.Error(w, "body is required", http.StatusBadRequest)
+			return
+		}
+		res, err := h.Create(r.Context(), req)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		if err := json.NewEncoder(w).Encode(res); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 	}
 
 	if r.Method == http.MethodGet {
@@ -53,6 +70,14 @@ func (h *MessageHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
+}
+
+func (h *MessageHandler) Create(ctx context.Context, req *model.CreateMessageRequest) (*model.CreateMessageResponse, error) {
+	message, err := h.svc.CreateMessage(ctx, req.Body)
+	if err != nil {
+		return nil, err
+	}
+	return &model.CreateMessageResponse{Message: *message}, nil
 }
 
 func (h *MessageHandler) Read(ctx context.Context, req *model.ReadMessageRequest) (*model.ReadMessageResponse, error) {

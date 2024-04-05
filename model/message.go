@@ -4,20 +4,18 @@ import "time"
 
 type (
 	Message struct {
-		ID uint `json:"id"`
-		// UserID   uint   `json:"user_id"`
-		// UserName string `json:"user_name"`
-		Text      string    `json:"text"`
+		ID        int64     `json:"id"`
+		Body      string    `json:"body"`
 		CreatedAt time.Time `json:"created_at"`
 		UpdatedAt time.Time `json:"updated_at"`
 	}
 
 	CreateMessageRequest struct {
-		Text string `json:"text"`
+		Body string `json:"body"`
 	}
 
 	CreateMessageResponse struct {
-		Message *Message `json:"message"`
+		Message Message `json:"message"`
 	}
 
 	ReadMessageRequest struct {
