@@ -16,4 +16,8 @@ type (
 		Offset int64 `json:"offset"`
 		Limit  int64 `json:"limit"`
 	}
+
+	ReadMessageResponse struct {
+		Messages []*Message `json:"messages"`
+	}
 )

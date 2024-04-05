@@ -29,7 +29,7 @@ func main() {
 	mux := router.NewRouter(db)
 
 	server := http.Server{
-		Addr:    defaultDBPath,
+		Addr:    defaultPort,
 		Handler: mux,
 	}
 

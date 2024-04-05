@@ -3,6 +3,7 @@ package handler
 import (
 	"chat_san/model"
 	"chat_san/service"
+	"context"
 	"encoding/json"
 	"net/http"
 	"strconv"
@@ -48,4 +49,12 @@ func (h *MessageHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
+}
+
+func (h *MessageHandler) Read(ctx context.Context, req *model.ReadMessageRequest) (*model.ReadMessageResponse, error) {
+	messages, err := h.svc.ReadMessage(ctx, req.Offset, req.Limit)
+	if err != nil {
+		return nil, err
+	}
+	return &model.ReadMessageResponse{Messages: messages}, nil
 }
